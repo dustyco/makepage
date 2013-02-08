@@ -33,24 +33,36 @@ void doHeader (ostream& html, const path& p) {
 		 << "		color:#b0b0b0;" << endl
 		 << "		background-color:#222222;" << endl
 		 << "		font-size:16;" << endl
-		 << "		}" << endl
+		 << "		margin:0;" << endl
+		 << "		padding:0;" << endl
+		 << "	}" << endl
 		 << "	a {" << endl
 		 << "		color:#ffffff;" << endl
 		 << "		text-decoration:none;" << endl
 		 << "		background-color:#333333;" << endl
-		 << "		}" << endl
+		 << "	}" << endl
 		 << "	a.folder {" << endl
 		 << "		padding:4px;" << endl
 		 << "		color:#5f9fcf;" << endl
-		 << "		}" << endl
+		 << "	}" << endl
 		 << "	a.file {" << endl
 		 << "		padding:4px;" << endl
-		 << "		}" << endl
+		 << "	}" << endl
 		 << "	td {" << endl
 		 << "		vertical-align:top;" << endl
-		 << "		}" << endl
+		 << "	}" << endl
+		 << "	img.fullscreen {" << endl
+		 << "		height:100%;" << endl
+		 << "		width:auto;" << endl
+		 << "	}" << endl
 		 << "</style>" << endl
-		 << "<body>" << endl << endl << endl;
+		 << "<body>" << endl
+		 << "<div id=\"imgdiv\"></div>" << endl
+#ifdef COLUMNS
+		 << "<div id=\"indexdiv\" style=\"display:none;\">" << endl
+#endif
+		 << endl << endl;
+
 }
 
 void doPathbar (ostream& html, path p) {
@@ -77,13 +89,13 @@ void doPathbar (ostream& html, path p) {
 }
 
 void doMenu (ostream& html, pathset& files, pathset& folders) {
-	#ifdef COLUMNS
+#ifdef COLUMNS
 	html << "<div>" << endl
 	     << "<table>" << endl;
-	#else
+#else
 	html << "<div style=\"float:left;\">" << endl
 	     << "<table>" << endl;
-	#endif
+#endif
 	for (pathset::iterator it=folders.begin(); it!=folders.end(); it++) {
 		string folderstr = (*it).filename().string();
 		html << "<tr><td><a class=\"folder\" href=\"" << folderstr << "/index.html\">" << folderstr << "/</a></td></tr>" << endl;
@@ -103,9 +115,9 @@ void doMenu (ostream& html, pathset& files, pathset& folders) {
 }
 
 void doImages (ostream& html, pathset& images, pathlist& thumbs) {
-	#ifdef COLUMNS
-		html << "<div id=\"container\">" << endl;
-	#endif
+#ifdef COLUMNS
+	html << "<div id=\"container\">" << endl;
+#endif
 	for (pathset::iterator it=images.begin(); it!=images.end(); it++) {
 		string imagename = (*it).filename().string();
 		string thumbname = "." + imagename + ".jpg";
@@ -113,32 +125,52 @@ void doImages (ostream& html, pathset& images, pathlist& thumbs) {
 		thumb.remove_filename();
 		thumb += ("/" + thumbname);
 		thumbs.push_back(thumb);
-		#ifdef COLUMNS
-			html << "<div class=\"box photo col3\">";
-		#endif
-		html << "<a target=\"_blank\" href=\"" << imagename << "\"><img src=\"" << thumbname << "\" /></a>";
-		#ifdef COLUMNS
-			html << "</div>" << endl;
-		#endif
+#ifdef COLUMNS
+		html << "<div class=\"box photo col3\">";
+#endif
+		html << "<a target=\"_blank\" href=\"?file=" << imagename << "\"><img src=\"" << thumbname << "\" /></a>";
+#ifdef COLUMNS
+		html << "</div>" << endl;
+#endif
 	}
-	#ifdef COLUMNS
-		html << "</div>";
-	#endif
+#ifdef COLUMNS
+	html << "</div>";
+#endif
 	html << endl << endl;
 }
 
 void doFooter (ostream& html) {
-	#ifdef COLUMNS
-		html << "<script>" << endl
-		     << MASONRY << endl
-		     << "</script>" << endl
-		     << "<script>" << endl
-		     << "	window.onload = function() {" << endl
-			 << "		var wall = new Masonry( document.getElementById('container') );" << endl
-			 << "	};" << endl
-		     << "</script>" << endl << endl;
-	#endif
-	html << "</body>" << endl
+#ifdef COLUMNS
+	html << "</div>" << endl
+	     << endl
+	     << "<script>" << endl
+	     << MASONRY << endl
+	     << "</script>" << endl
+#endif
+	     << "<script>" << endl
+	     << "function getUrlVars() {" << endl
+	     << "	var map = {};" << endl
+	     << "	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {" << endl
+	     << "		map[key] = value;" << endl
+	     << "	});" << endl
+	     << "	return map;" << endl
+	     << "};" << endl
+	     << "function centerView() {" << endl
+	     << "	scrollTo(document.body.scrollWidth/2 - document.body.clientWidth/2, 0);" << endl
+	     << "}" << endl
+	     << "window.onload = function() {" << endl
+	     << "	var file = getUrlVars()[\"file\"];" << endl
+	     << "	if (file) {" << endl
+	     << "		document.getElementById('imgdiv').innerHTML='<img onload=\"centerView()\" class=\"fullscreen\" src=\"'+file+'\" />';" << endl
+	     << "	} else {" << endl
+	     << "		document.getElementById('indexdiv').style.display='block';" << endl
+#ifdef COLUMNS
+	     << "		var wall = new Masonry( document.getElementById('container') );" << endl
+#endif
+	     << "	}" << endl
+	     << "};" << endl
+	     << "</script>" << endl << endl
+	     << "</body>" << endl
 	     << "</html>" << endl;
 }
 

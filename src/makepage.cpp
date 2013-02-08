@@ -39,6 +39,10 @@ int main (int argc, char const* argv[])
 			stats.recurse = true;
 			it = args.erase(it);
 		}
+		if (((*it).compare("-v") == 0) | ((*it).compare("--version") == 0)) {
+			cout << "makepage-0.2.0" << endl;
+			return 0;
+		}
 	}
 	
 	// See if we should use stdin instead

@@ -63,7 +63,7 @@ void worker(Jobs* jobs, int id, pathset* failed) {
 		thumb += ("/." + image.filename().string() + ".jpg");
 		
 		std::string key("Exif.Photo.UserComment");
-		std::string value = lexical_cast<string>(THUMB_W256_Q85) + lexical_cast<string>(last_write_time(image));
+		std::string value = lexical_cast<string>(THUMB_W336_Q80) + lexical_cast<string>(last_write_time(image));
 		
 		// See if the thumb needs to be (re)created
 		if (is_regular_file(thumb)) {
@@ -86,7 +86,7 @@ void worker(Jobs* jobs, int id, pathset* failed) {
 		term.unlock();
 		
 		// Make the thumb
-		string command = "convert \"" + image.string() + "[0]\" -strip -colorspace sRGB -resize 256x1024 -quality 85 \"" + thumb.string() + "\" &> /dev/null";
+		string command = "convert \"" + image.string() + "[0]\" -strip -colorspace sRGB -resize 336x1024 -quality 80 \"" + thumb.string() + "\" &> /dev/null";
 		int error = ::system(command.c_str());
 		if (error != 0) {
 			cerr << "\tconvert: Returned error code: " << error << endl;
