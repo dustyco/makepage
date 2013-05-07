@@ -97,7 +97,7 @@ endif()
 #	# Statically linking boost to a dynamic Ogre build doesn't work on Linux 64bit
 #	set(Boost_USE_STATIC_LIBS ${OGRE_STATIC})
 #endif ()
-set(Boost_USE_STATIC_LIBS TRUE)
+#set(Boost_USE_STATIC_LIBS TRUE)
 
 # Decide where to look
 set(BOOST_ROOT_ENV $ENV{BOOST_ROOT})
